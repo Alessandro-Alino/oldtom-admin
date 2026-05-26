@@ -1,0 +1,23 @@
+{
+  "@@locale": "it",
+  "title_app": "OldTom Dashbord",
+  "yes": "Si",
+  "no": "No",
+  "theme": "Tema",
+  "light": "Chiaro",
+  "dark": "Scuro",
+  "system": "Sistema",
+  "login": "Accedi",
+  "@_CATEGORIES": {},
+  "category": "{count, plural, =1{Categoria} other{Categorie}}",
+  "@_PRODUCTS": {},
+  "product": "{count, plural, =1{Prodotto} other{Prodotti}}",
+  "@_IMAGES": {},
+  "image": "{count, plural, =1{Immagine} other{Immagini}}",
+  "@_DRAWER_ITEMS": {},
+  "home": "Home",
+  "reset": "Reset",
+  "settings": "Impostazioni",
+  "@_ERROR": {},
+  "error": "Errore"
+}

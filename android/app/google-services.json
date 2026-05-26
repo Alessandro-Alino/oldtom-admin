@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "694214434046",
+    "project_id": "prj-old-tom",
+    "storage_bucket": "prj-old-tom.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:694214434046:android:e220e65b1fb201494299af",
+        "android_client_info": {
+          "package_name": "alealino.com.oldtom_admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAa8jgHzkLoUDyQk8mF88WaiS8G9iW8LGQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
