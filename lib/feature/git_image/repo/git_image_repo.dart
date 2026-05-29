@@ -1,48 +1,60 @@
 import 'dart:developer';
 import 'package:oldtom_admin/config/dio/app_dio.dart';
 import 'package:oldtom_admin/config/helpers/helpers.dart';
-import 'package:oldtom_admin/feature/git_image/model/git_image_res_model.dart';
+import 'package:oldtom_admin/feature/git_image/model/git_image_model.dart';
 
 class GitImageRepo {
   final AppDio _appDio = AppDio();
 
   // Config
-  static const String _user = String.fromEnvironment('user');
+  static const String _owner = String.fromEnvironment('owner');
   static const String _repo = String.fromEnvironment('repo');
   static const String _branch = String.fromEnvironment('branch');
-  static const String _apiBase = String.fromEnvironment('apiBase');
+  static const String _hostRestAPI = String.fromEnvironment("hostnameRestAPI");
+
+  //static const String _hostCDN = String.fromEnvironment("hostnameCDN");
+  //static const String _hostGitRAW = String.fromEnvironment("hostnameGitRAW");
 
   // Read Git-Image
-  Future<GitImageResModel> readGitImages() async {
+  Future<List<GitImageModel>> readGitImages() async {
     final response = await _appDio.dio.get(
-      '$_apiBase/repos/$_user/$_repo/git/trees/$_branch',
+      '$_hostRestAPI/repos/$_owner/$_repo/contents?ref=$_branch',
     );
 
-    log('$_apiBase/repos/$_user/$_repo/git/trees/$_branch');
+    final List<GitImageModel> gitImageRes = response.data.map<GitImageModel>((
+      e,
+    ) {
+      return GitImageModel.fromJson(e);
+    }).toList();
 
-    final GitImageResModel gitImageRes = GitImageResModel.fromJson(
-      response.data,
-    );
-
-    final filteredTree = gitImageRes.tree.where((file) {
+    final List<GitImageModel> filteredTree = gitImageRes.where((file) {
       final ext = file.path.toLowerCase().split('.').last;
       return Helpers.imageExtensions.contains('.$ext');
     }).toList();
 
-    return gitImageRes.copyWith(tree: filteredTree);
+    return filteredTree;
   }
 
   // Create Git-Image
-  Future<void> createGitImages({required String path}) async {
+  Future<void> createGitImages({
+    required String path,
+    required String content,
+  }) async {
     try {
       final result = await _appDio.dio.put(
-        '$_apiBase/repos/$_user/$_repo/contents/$path',
-        data: {"message": "", "content": "", "branch": _branch},
+        '$_hostRestAPI/repos/$_owner/$_repo/contents/$path',
+        data: {
+          "message": "Image uploaded via App",
+          "content": content,
+          "branch": _branch,
+        },
       );
       log('$result');
     } catch (e) {
-      log('[GIT_IMAGE_REPO] ERROR:'
-          ' $e');
+      log(
+        '[GIT_IMAGE_REPO] ERROR:'
+        ' $e',
+      );
     }
   }
 

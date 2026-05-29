@@ -2,6 +2,10 @@ import 'package:dio/dio.dart';
 import 'dio_err_interceptor.dart';
 
 class AppDio {
+
+  // Get token
+  static const String _gitToken = String.fromEnvironment("gitToken");
+
   // Singleton
   factory AppDio() => _instance;
   static final AppDio _instance = AppDio._internal();
@@ -15,6 +19,9 @@ class AppDio {
         BaseOptions(
           connectTimeout: Duration(seconds: 10),
           receiveTimeout: Duration(seconds: 10),
+          headers: {
+            'Authorization': 'Bearer $_gitToken'
+          }
         ),
       ) {
     // // Bitbucket Interceptor

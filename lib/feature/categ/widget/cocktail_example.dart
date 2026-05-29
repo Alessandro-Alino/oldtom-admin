@@ -73,7 +73,9 @@ class CocktailExample extends StatelessWidget {
               width: 150.0,
               height: 150.0,
               fit: BoxFit.contain,
-              imageURL: AppImageService.getImageFromJSDelivr(categ.image),
+              imageURL: AppImageService.getImageFromCDN(
+                path: categ.image,
+              ),
             ),
           ),
         ],

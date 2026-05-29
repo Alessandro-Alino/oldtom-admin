@@ -11,7 +11,7 @@ sealed class GitImageEvent with _$GitImageEvent {
   const factory GitImageEvent.pickImage({bool? reset}) = _PickImageEvent;
 
   // Create Git-Image
-  const factory GitImageEvent.createGitImage({required String gitImage}) =
+  const factory GitImageEvent.createGitImage({required String filename, required Uint8List bytes}) =
       _CreateGitImageEvent;
 
   // Update Git-Image

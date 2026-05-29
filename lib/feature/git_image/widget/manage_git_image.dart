@@ -4,7 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oldtom_admin/config/helpers/extensions.dart';
 import 'package:oldtom_admin/feature/git_image/bloc/git_image_bloc.dart';
-import 'package:oldtom_admin/feature/git_image/model/git_image_res_model.dart';
+import 'package:oldtom_admin/feature/git_image/model/git_image_model.dart';
+import 'package:oldtom_admin/widget/app_loading.dart';
 
 class ManageGitImage extends StatefulWidget {
   const ManageGitImage({super.key, this.gitImage});
@@ -30,7 +31,6 @@ class _ManageGitImageState extends State<ManageGitImage> {
 
   @override
   void dispose() {
-    _formKey.currentState?.dispose();
     _nameGitImageCntrl.dispose();
     _pageCntrl.dispose();
     super.dispose();
@@ -75,28 +75,38 @@ class _ManageGitImageState extends State<ManageGitImage> {
               ),
             ),
             // Main content
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(color: Colors.yellow.shade900),
-                child: Column(
+            BlocBuilder<GitImageBloc, GitImageState>(
+              builder: (context, state) {
+                return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   spacing: 16.0,
                   children: [
                     // Image Picked
-                    BlocBuilder<GitImageBloc, GitImageState>(
-                      builder: (context, state) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              state.filePicked == null
-                                  ? 'Select Image'
-                                  : state.filePicked!.files.first.name,
+                    Container(
+                      width: 150.0,
+                      height: 150.0,
+                      decoration: BoxDecoration(
+                        color: Colors.indigo.shade900,
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: state.filePicked == null
+                          ? Center(child: const Text('Select image'))
+                          : Image.memory(
+                              state.filePicked!.files.first.bytes!,
+                              fit: BoxFit.contain,
                             ),
-                          ],
-                        );
-                      },
+                    ),
+                    // Name Image Picked
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          state.filePicked == null
+                              ? 'Name Image'
+                              : state.filePicked!.files.first.name,
+                        ),
+                      ],
                     ),
                     // Pick Image
                     ActionChip.elevated(
@@ -105,9 +115,18 @@ class _ManageGitImageState extends State<ManageGitImage> {
                         context.read<GitImageBloc>().pickImage();
                       },
                     ),
+                    // Test
+                    switch (state.gitImageOperation) {
+                      // TODO: Handle this case.
+                      GitImageOperation.idle => Icon(Icons.play_arrow_rounded),
+                      GitImageOperation.createLoading => AppLoading(),
+                      GitImageOperation.createSuccess => Icon(Icons.check),
+                      GitImageOperation.createError => Icon(Icons.error),
+                      _ => const SizedBox(),
+                    },
                   ],
-                ),
-              ),
+                );
+              },
             ),
             const Divider(),
             // Submit Button
@@ -122,21 +141,17 @@ class _ManageGitImageState extends State<ManageGitImage> {
                         if (_formKey.currentState!.validate()) {
                           // CREATE GIT-IMAGE
                           if (widget.gitImage == null) {
-                            final GitImageModel newgitImage = GitImageModel(
-                              path: _nameGitImageCntrl.text,
-                              mode: '',
-                              type: '',
-                              sha: '',
-                              url: '',
+                            // Create Image
+                            context.read<GitImageBloc>().createImage(
+                              filename: state.filePicked!.files.first.name,
+                              bytes: state.filePicked!.files.first.bytes!,
                             );
-                            //context.read<GitImageBloc>().createGitImage();
-                            context.router.pop();
+                            //context.router.pop();
                           }
                           // UPDATE GIT-IMAGE
                           else {
                             log('Update categ: ${_nameGitImageCntrl.text}');
-                            final GitImageModel newgitImage = widget.gitImage!
-                                .copyWith(path: _nameGitImageCntrl.text);
+                            //final UploadGitImageModel newgitImage = widget.gitImage!.copyWith(path: _nameGitImageCntrl.text);
                             //context.read<GitImageBloc>().updateGitImage();
                             context.router.pop();
                           }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oldtom_admin/feature/categ/bloc/categ_bloc.dart';
 import 'package:oldtom_admin/feature/git_image/bloc/git_image_bloc.dart';
-import 'package:oldtom_admin/feature/git_image/model/git_image_res_model.dart';
+import 'package:oldtom_admin/feature/git_image/model/git_image_model.dart';
 import 'package:oldtom_admin/widget/app_loading.dart';
 import 'package:oldtom_admin/widget/images/app_image.dart';
 import 'package:oldtom_admin/widget/images/app_image_service.dart';
@@ -106,8 +106,8 @@ class _GitImageState extends State<GitImage> {
                             borderRadius: BorderRadius.circular(16.0),
                           ),
                           child: AppImage(
-                            imageURL: AppImageService.getImageFromGitRaw(
-                              gitImage.path,
+                            imageURL: AppImageService.getImageFromCDN(
+                              path: gitImage.path,
                             ),
                           ),
                         ),

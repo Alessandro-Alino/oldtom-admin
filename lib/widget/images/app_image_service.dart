@@ -1,21 +1,30 @@
+enum AppImageHostname { cdn, restAPI, gitRAW }
+
 class AppImageService {
-  static const String user = String.fromEnvironment("user");
-  static const String repo = String.fromEnvironment("repo");
-  static const String branch = String.fromEnvironment("branch");
+  static const String _owner = String.fromEnvironment("owner");
+  static const String _repo = String.fromEnvironment("repo");
+  static const String _branch = String.fromEnvironment("branch");
+  static const String _hostCDN = String.fromEnvironment("hostnameCDN");
+  // static const String _hostRestAPI = String.fromEnvironment("hostnameRestAPI");
+  // static const String _hostGitRAW = String.fromEnvironment("hostnameGitRAW");
 
-  static final String baseJSDelivrURL =
-      "https://cdn.jsdelivr.net/gh/$user/$repo@$branch";
-  static final String baseGitRawURL =
-      "https://raw.githubusercontent.com/$user/$repo/$branch";
-
-  // GET image from JS Delivr CDN
-  static String getImageFromJSDelivr(String path) {
-    return "$baseJSDelivrURL/$path";
-  }
-
-  // GET image from GIT RAW
-  static String getImageFromGitRaw(String path) {
-    return "$baseGitRawURL/$path";
+  static String getImageFromCDN({
+    //required AppImageHostname hostname,
+    required String path,
+  }) {
+    // switch (hostname) {
+    //   case AppImageHostname.cdn:
+    //     return "$_hostCDN/$_owner/$_repo@$_branch/$path";
+    //
+    //   case AppImageHostname.restAPI:
+    //     // Return "$_hostRestAPI/repos/$_owner/$_repo/contents/$path?ref=$_branch";
+    //     return '';
+    //   case AppImageHostname.gitRAW:
+    //     //'$_hostGitRAW/repos/$_owner/$_repo/git/trees/$_branch',
+    //     // Return "$_hostGitRAW/$_owner/$_repo/$_branch";
+    //     return '';
+    // }
+        return "$_hostCDN/$_owner/$_repo@$_branch/$path";
   }
 
   // Images

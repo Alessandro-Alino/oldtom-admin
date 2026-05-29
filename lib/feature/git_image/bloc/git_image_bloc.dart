@@ -1,9 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:oldtom_admin/feature/git_image/model/git_image_res_model.dart';
+import 'package:oldtom_admin/feature/git_image/model/git_image_model.dart';
 import 'package:oldtom_admin/feature/git_image/repo/git_image_repo.dart';
 
 part 'git_image_event.dart';
@@ -39,6 +40,7 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
         await _pickImage(event, emit);
         break;
       case _CreateGitImageEvent():
+        await _createImage(event, emit);
         break;
       default:
         break;
@@ -57,6 +59,10 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
   // Pick Image
   void pickImage({bool? reset}) => add(_PickImageEvent(reset: reset));
 
+  // Create Image
+  void createImage({required String filename, required Uint8List bytes}) =>
+      add(_CreateGitImageEvent(filename: filename, bytes: bytes));
+
   // ====================
   // BLOC
   // ====================
@@ -73,8 +79,8 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
   ) async {
     try {
       emit(state.copyWith(status: GitImageStatus.loading));
-      final GitImageResModel gitImageRes = await _gitImageRepo.readGitImages();
-      final List<GitImageModel> gitImageList = gitImageRes.tree;
+      final List<GitImageModel> gitImageList = await _gitImageRepo
+          .readGitImages();
       emit(
         state.copyWith(
           status: GitImageStatus.success,
@@ -87,6 +93,7 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
     }
   }
 
+  // _Pick Image
   Future<void> _pickImage(
     _PickImageEvent event,
     Emitter<GitImageState> emit,
@@ -97,12 +104,32 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
       try {
         FilePickerResult? filePicked = await FilePicker.pickFiles(
           type: FileType.image,
+          withData: true,
         );
 
         emit(state.copyWith(filePicked: filePicked));
       } catch (e) {
         log('[GIT_IMAGE_BLOC] ERROR: $e');
       }
+    }
+  }
+
+  // _Create Image
+  Future<void> _createImage(
+    _CreateGitImageEvent event,
+    Emitter<GitImageState> emit,
+  ) async {
+    emit(state.copyWith(gitImageOperation: GitImageOperation.createLoading));
+    try {
+      final content = base64Encode(event.bytes);
+      await _gitImageRepo.createGitImages(
+        path: event.filename,
+        content: content,
+      );
+      emit(state.copyWith(gitImageOperation: GitImageOperation.createSuccess));
+    } catch (e) {
+      emit(state.copyWith(gitImageOperation: GitImageOperation.createError));
+      log('[GIT_IMAGE_BLOC] ERROR: $e');
     }
   }
 }

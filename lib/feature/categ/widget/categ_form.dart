@@ -97,8 +97,9 @@ class CategForm extends StatelessWidget {
                                               )
                                             : AppImage(
                                                 imageURL:
-                                                    AppImageService.getImageFromGitRaw(
-                                                      state.selectedImageURL,
+                                                    AppImageService.getImageFromCDN(
+                                                      path: state
+                                                          .selectedImageURL,
                                                     ),
                                               ),
                                       ),
