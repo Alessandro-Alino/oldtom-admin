@@ -16,24 +16,6 @@ class CategPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //// Show Modal to MANAGE Categ
-    //     showModalToManageCateg({CategModel? categ}) {
-    //       showModalBottomSheet(
-    //         context: context,
-    //         isScrollControlled: true,
-    //         backgroundColor: Colors.transparent,
-    //         constraints: BoxConstraints(minWidth: 800.0, maxWidth: 800.0),
-    //         builder: (context) {
-    //           return ManageCateg(categ: categ);
-    //         },
-    //       ).then((e) {
-    //         // Clear Selected image when close modal
-    //         if (context.mounted) {
-    //           context.read<CategBloc>().selectImageURL(selectedImageURL: null);
-    //         }
-    //       });
-    //     }
-
     return BasePage(
       title: Text(context.ltr.category(2)),
       body: Scaffold(

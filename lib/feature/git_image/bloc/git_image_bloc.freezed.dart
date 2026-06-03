@@ -137,15 +137,15 @@ return deleteGitImage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  init,TResult Function()?  readGitImages,TResult Function( bool? reset)?  pickImage,TResult Function( String filename,  Uint8List bytes)?  createGitImage,TResult Function( String id,  String gitImage)?  updateGitImage,TResult Function( String id)?  deleteGitImage,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( bool? resetStatus)?  init,TResult Function()?  readGitImages,TResult Function( bool? reset)?  pickImage,TResult Function( String filename,  PlatformFile file)?  createGitImage,TResult Function( String filename,  GitImageModel gitImage)?  updateGitImage,TResult Function( GitImageModel gitImage)?  deleteGitImage,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _InitEvent() when init != null:
-return init();case _ReadGitImagesEvent() when readGitImages != null:
+return init(_that.resetStatus);case _ReadGitImagesEvent() when readGitImages != null:
 return readGitImages();case _PickImageEvent() when pickImage != null:
 return pickImage(_that.reset);case _CreateGitImageEvent() when createGitImage != null:
-return createGitImage(_that.filename,_that.bytes);case _UpdateGitImageEvent() when updateGitImage != null:
-return updateGitImage(_that.id,_that.gitImage);case _DeleteGitImageEvent() when deleteGitImage != null:
-return deleteGitImage(_that.id);case _:
+return createGitImage(_that.filename,_that.file);case _UpdateGitImageEvent() when updateGitImage != null:
+return updateGitImage(_that.filename,_that.gitImage);case _DeleteGitImageEvent() when deleteGitImage != null:
+return deleteGitImage(_that.gitImage);case _:
   return orElse();
 
 }
@@ -163,15 +163,15 @@ return deleteGitImage(_that.id);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  init,required TResult Function()  readGitImages,required TResult Function( bool? reset)  pickImage,required TResult Function( String filename,  Uint8List bytes)  createGitImage,required TResult Function( String id,  String gitImage)  updateGitImage,required TResult Function( String id)  deleteGitImage,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( bool? resetStatus)  init,required TResult Function()  readGitImages,required TResult Function( bool? reset)  pickImage,required TResult Function( String filename,  PlatformFile file)  createGitImage,required TResult Function( String filename,  GitImageModel gitImage)  updateGitImage,required TResult Function( GitImageModel gitImage)  deleteGitImage,}) {final _that = this;
 switch (_that) {
 case _InitEvent():
-return init();case _ReadGitImagesEvent():
+return init(_that.resetStatus);case _ReadGitImagesEvent():
 return readGitImages();case _PickImageEvent():
 return pickImage(_that.reset);case _CreateGitImageEvent():
-return createGitImage(_that.filename,_that.bytes);case _UpdateGitImageEvent():
-return updateGitImage(_that.id,_that.gitImage);case _DeleteGitImageEvent():
-return deleteGitImage(_that.id);}
+return createGitImage(_that.filename,_that.file);case _UpdateGitImageEvent():
+return updateGitImage(_that.filename,_that.gitImage);case _DeleteGitImageEvent():
+return deleteGitImage(_that.gitImage);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -185,15 +185,15 @@ return deleteGitImage(_that.id);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  init,TResult? Function()?  readGitImages,TResult? Function( bool? reset)?  pickImage,TResult? Function( String filename,  Uint8List bytes)?  createGitImage,TResult? Function( String id,  String gitImage)?  updateGitImage,TResult? Function( String id)?  deleteGitImage,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( bool? resetStatus)?  init,TResult? Function()?  readGitImages,TResult? Function( bool? reset)?  pickImage,TResult? Function( String filename,  PlatformFile file)?  createGitImage,TResult? Function( String filename,  GitImageModel gitImage)?  updateGitImage,TResult? Function( GitImageModel gitImage)?  deleteGitImage,}) {final _that = this;
 switch (_that) {
 case _InitEvent() when init != null:
-return init();case _ReadGitImagesEvent() when readGitImages != null:
+return init(_that.resetStatus);case _ReadGitImagesEvent() when readGitImages != null:
 return readGitImages();case _PickImageEvent() when pickImage != null:
 return pickImage(_that.reset);case _CreateGitImageEvent() when createGitImage != null:
-return createGitImage(_that.filename,_that.bytes);case _UpdateGitImageEvent() when updateGitImage != null:
-return updateGitImage(_that.id,_that.gitImage);case _DeleteGitImageEvent() when deleteGitImage != null:
-return deleteGitImage(_that.id);case _:
+return createGitImage(_that.filename,_that.file);case _UpdateGitImageEvent() when updateGitImage != null:
+return updateGitImage(_that.filename,_that.gitImage);case _DeleteGitImageEvent() when deleteGitImage != null:
+return deleteGitImage(_that.gitImage);case _:
   return null;
 
 }
@@ -205,39 +205,73 @@ return deleteGitImage(_that.id);case _:
 
 
 class _InitEvent with DiagnosticableTreeMixin implements GitImageEvent {
-  const _InitEvent();
+  const _InitEvent({this.resetStatus});
   
 
+ final  bool? resetStatus;
 
-
+/// Create a copy of GitImageEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$InitEventCopyWith<_InitEvent> get copyWith => __$InitEventCopyWithImpl<_InitEvent>(this, _$identity);
 
 
 @override
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'GitImageEvent.init'))
-    ;
+    ..add(DiagnosticsProperty('resetStatus', resetStatus));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InitEvent);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InitEvent&&(identical(other.resetStatus, resetStatus) || other.resetStatus == resetStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,resetStatus);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'GitImageEvent.init()';
+  return 'GitImageEvent.init(resetStatus: $resetStatus)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$InitEventCopyWith<$Res> implements $GitImageEventCopyWith<$Res> {
+  factory _$InitEventCopyWith(_InitEvent value, $Res Function(_InitEvent) _then) = __$InitEventCopyWithImpl;
+@useResult
+$Res call({
+ bool? resetStatus
+});
 
 
+
+
+}
+/// @nodoc
+class __$InitEventCopyWithImpl<$Res>
+    implements _$InitEventCopyWith<$Res> {
+  __$InitEventCopyWithImpl(this._self, this._then);
+
+  final _InitEvent _self;
+  final $Res Function(_InitEvent) _then;
+
+/// Create a copy of GitImageEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? resetStatus = freezed,}) {
+  return _then(_InitEvent(
+resetStatus: freezed == resetStatus ? _self.resetStatus : resetStatus // ignore: cast_nullable_to_non_nullable
+as bool?,
+  ));
+}
+
+
+}
 
 /// @nodoc
 
@@ -353,11 +387,11 @@ as bool?,
 
 
 class _CreateGitImageEvent with DiagnosticableTreeMixin implements GitImageEvent {
-  const _CreateGitImageEvent({required this.filename, required this.bytes});
+  const _CreateGitImageEvent({required this.filename, required this.file});
   
 
  final  String filename;
- final  Uint8List bytes;
+ final  PlatformFile file;
 
 /// Create a copy of GitImageEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -370,21 +404,21 @@ _$CreateGitImageEventCopyWith<_CreateGitImageEvent> get copyWith => __$CreateGit
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'GitImageEvent.createGitImage'))
-    ..add(DiagnosticsProperty('filename', filename))..add(DiagnosticsProperty('bytes', bytes));
+    ..add(DiagnosticsProperty('filename', filename))..add(DiagnosticsProperty('file', file));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateGitImageEvent&&(identical(other.filename, filename) || other.filename == filename)&&const DeepCollectionEquality().equals(other.bytes, bytes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateGitImageEvent&&(identical(other.filename, filename) || other.filename == filename)&&(identical(other.file, file) || other.file == file));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,filename,const DeepCollectionEquality().hash(bytes));
+int get hashCode => Object.hash(runtimeType,filename,file);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'GitImageEvent.createGitImage(filename: $filename, bytes: $bytes)';
+  return 'GitImageEvent.createGitImage(filename: $filename, file: $file)';
 }
 
 
@@ -395,7 +429,7 @@ abstract mixin class _$CreateGitImageEventCopyWith<$Res> implements $GitImageEve
   factory _$CreateGitImageEventCopyWith(_CreateGitImageEvent value, $Res Function(_CreateGitImageEvent) _then) = __$CreateGitImageEventCopyWithImpl;
 @useResult
 $Res call({
- String filename, Uint8List bytes
+ String filename, PlatformFile file
 });
 
 
@@ -412,11 +446,11 @@ class __$CreateGitImageEventCopyWithImpl<$Res>
 
 /// Create a copy of GitImageEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? filename = null,Object? bytes = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? filename = null,Object? file = null,}) {
   return _then(_CreateGitImageEvent(
 filename: null == filename ? _self.filename : filename // ignore: cast_nullable_to_non_nullable
-as String,bytes: null == bytes ? _self.bytes : bytes // ignore: cast_nullable_to_non_nullable
-as Uint8List,
+as String,file: null == file ? _self.file : file // ignore: cast_nullable_to_non_nullable
+as PlatformFile,
   ));
 }
 
@@ -427,11 +461,11 @@ as Uint8List,
 
 
 class _UpdateGitImageEvent with DiagnosticableTreeMixin implements GitImageEvent {
-  const _UpdateGitImageEvent({required this.id, required this.gitImage});
+  const _UpdateGitImageEvent({required this.filename, required this.gitImage});
   
 
- final  String id;
- final  String gitImage;
+ final  String filename;
+ final  GitImageModel gitImage;
 
 /// Create a copy of GitImageEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -444,21 +478,21 @@ _$UpdateGitImageEventCopyWith<_UpdateGitImageEvent> get copyWith => __$UpdateGit
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'GitImageEvent.updateGitImage'))
-    ..add(DiagnosticsProperty('id', id))..add(DiagnosticsProperty('gitImage', gitImage));
+    ..add(DiagnosticsProperty('filename', filename))..add(DiagnosticsProperty('gitImage', gitImage));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateGitImageEvent&&(identical(other.id, id) || other.id == id)&&(identical(other.gitImage, gitImage) || other.gitImage == gitImage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateGitImageEvent&&(identical(other.filename, filename) || other.filename == filename)&&(identical(other.gitImage, gitImage) || other.gitImage == gitImage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,gitImage);
+int get hashCode => Object.hash(runtimeType,filename,gitImage);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'GitImageEvent.updateGitImage(id: $id, gitImage: $gitImage)';
+  return 'GitImageEvent.updateGitImage(filename: $filename, gitImage: $gitImage)';
 }
 
 
@@ -469,11 +503,11 @@ abstract mixin class _$UpdateGitImageEventCopyWith<$Res> implements $GitImageEve
   factory _$UpdateGitImageEventCopyWith(_UpdateGitImageEvent value, $Res Function(_UpdateGitImageEvent) _then) = __$UpdateGitImageEventCopyWithImpl;
 @useResult
 $Res call({
- String id, String gitImage
+ String filename, GitImageModel gitImage
 });
 
 
-
+$GitImageModelCopyWith<$Res> get gitImage;
 
 }
 /// @nodoc
@@ -486,25 +520,34 @@ class __$UpdateGitImageEventCopyWithImpl<$Res>
 
 /// Create a copy of GitImageEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? id = null,Object? gitImage = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? filename = null,Object? gitImage = null,}) {
   return _then(_UpdateGitImageEvent(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+filename: null == filename ? _self.filename : filename // ignore: cast_nullable_to_non_nullable
 as String,gitImage: null == gitImage ? _self.gitImage : gitImage // ignore: cast_nullable_to_non_nullable
-as String,
+as GitImageModel,
   ));
 }
 
-
+/// Create a copy of GitImageEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$GitImageModelCopyWith<$Res> get gitImage {
+  
+  return $GitImageModelCopyWith<$Res>(_self.gitImage, (value) {
+    return _then(_self.copyWith(gitImage: value));
+  });
+}
 }
 
 /// @nodoc
 
 
 class _DeleteGitImageEvent with DiagnosticableTreeMixin implements GitImageEvent {
-  const _DeleteGitImageEvent({required this.id});
+  const _DeleteGitImageEvent({required this.gitImage});
   
 
- final  String id;
+ final  GitImageModel gitImage;
 
 /// Create a copy of GitImageEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -517,21 +560,21 @@ _$DeleteGitImageEventCopyWith<_DeleteGitImageEvent> get copyWith => __$DeleteGit
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'GitImageEvent.deleteGitImage'))
-    ..add(DiagnosticsProperty('id', id));
+    ..add(DiagnosticsProperty('gitImage', gitImage));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeleteGitImageEvent&&(identical(other.id, id) || other.id == id));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeleteGitImageEvent&&(identical(other.gitImage, gitImage) || other.gitImage == gitImage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id);
+int get hashCode => Object.hash(runtimeType,gitImage);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'GitImageEvent.deleteGitImage(id: $id)';
+  return 'GitImageEvent.deleteGitImage(gitImage: $gitImage)';
 }
 
 
@@ -542,11 +585,11 @@ abstract mixin class _$DeleteGitImageEventCopyWith<$Res> implements $GitImageEve
   factory _$DeleteGitImageEventCopyWith(_DeleteGitImageEvent value, $Res Function(_DeleteGitImageEvent) _then) = __$DeleteGitImageEventCopyWithImpl;
 @useResult
 $Res call({
- String id
+ GitImageModel gitImage
 });
 
 
-
+$GitImageModelCopyWith<$Res> get gitImage;
 
 }
 /// @nodoc
@@ -559,14 +602,23 @@ class __$DeleteGitImageEventCopyWithImpl<$Res>
 
 /// Create a copy of GitImageEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? id = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? gitImage = null,}) {
   return _then(_DeleteGitImageEvent(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,
+gitImage: null == gitImage ? _self.gitImage : gitImage // ignore: cast_nullable_to_non_nullable
+as GitImageModel,
   ));
 }
 
-
+/// Create a copy of GitImageEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$GitImageModelCopyWith<$Res> get gitImage {
+  
+  return $GitImageModelCopyWith<$Res>(_self.gitImage, (value) {
+    return _then(_self.copyWith(gitImage: value));
+  });
+}
 }
 
 /// @nodoc

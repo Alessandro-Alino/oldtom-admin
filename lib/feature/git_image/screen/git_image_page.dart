@@ -12,27 +12,26 @@ import 'package:oldtom_admin/widget/images/app_image.dart';
 import 'package:oldtom_admin/widget/images/app_image_service.dart';
 
 @RoutePage()
-class GitImagePage extends StatefulWidget {
+class GitImagePage extends StatelessWidget {
   const GitImagePage({super.key});
-
-  @override
-  State<GitImagePage> createState() => _GitImagePageState();
-}
-
-class _GitImagePageState extends State<GitImagePage> {
-  final PageController _pageCntrl = PageController();
-
-  @override
-  void dispose() {
-    _pageCntrl.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return BasePage(
       title: Text(context.ltr.image(2)),
-      body: BlocBuilder<GitImageBloc, GitImageState>(
+      body: BlocConsumer<GitImageBloc, GitImageState>(
+        listener: (context, state) {
+          switch (state.gitImageOperation) {
+            case GitImageOperation.createSuccess:
+              context.read<GitImageBloc>().readGitImages();
+            case GitImageOperation.updateSuccess:
+              context.read<GitImageBloc>().readGitImages();
+            case GitImageOperation.deleteSuccess:
+              context.read<GitImageBloc>().readGitImages();
+            case _:
+              null;
+          }
+        },
         builder: (context, state) {
           return CustomScrollView(
             slivers: [
@@ -90,15 +89,34 @@ class _GitImagePageState extends State<GitImagePage> {
                         itemBuilder: (context, index) {
                           final GitImageModel gitImage =
                               state.gitImageList[index];
-                          return Container(
-                            padding: const EdgeInsets.all(32.0),
-                            decoration: BoxDecoration(
-                              color: Colors.blueGrey.shade900,
-                              borderRadius: BorderRadius.circular(16.0),
-                            ),
-                            child: AppImage(
-                              imageURL: AppImageService.getImageFromCDN(
-                                path: gitImage.path,
+                          return InkWell(
+                            onTap: () {
+                              // Show Modal to UPDATE Git-Image
+                              Helpers.showGenericModal(
+                                context: context,
+                                builder: (context, scrollCntrl) {
+                                  return ManageGitImage(gitImage: gitImage);
+                                },
+                                onClosed: () {
+                                  context.read<GitImageBloc>().init(
+                                    resetStatus: true,
+                                  );
+                                  context.read<GitImageBloc>().pickImage(
+                                    reset: true,
+                                  );
+                                },
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(32.0),
+                              decoration: BoxDecoration(
+                                color: Colors.blueGrey.shade900,
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              child: AppImage(
+                                imageURL: AppImageService.getImageFromCDN(
+                                  path: gitImage.path,
+                                ),
                               ),
                             ),
                           );
@@ -118,6 +136,7 @@ class _GitImagePageState extends State<GitImagePage> {
               return ManageGitImage();
             },
             onClosed: () {
+              context.read<GitImageBloc>().init(resetStatus: true);
               context.read<GitImageBloc>().pickImage(reset: true);
             },
           );

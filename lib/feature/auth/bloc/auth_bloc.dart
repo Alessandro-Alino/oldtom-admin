@@ -95,13 +95,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     try {
       emit(state.copyWith(status: AuthStatus.loading));
-      await Future.delayed(const Duration(seconds: 3), () async {
-        await authRepo
-            .signInWithEmailAndPassword(
-          email: event.email,
-          password: event.password,
-        );
-      });
+      await authRepo.signInWithEmailAndPassword(
+        email: event.email,
+        password: event.password,
+      );
       emit(state.copyWith(status: AuthStatus.success));
     } catch (e) {
       _showMex(emit, error: e, mexType: MexType.error);

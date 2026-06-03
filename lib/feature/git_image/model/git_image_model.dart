@@ -20,16 +20,3 @@ sealed class GitImageModel with _$GitImageModel {
   factory GitImageModel.fromJson(Map<String, dynamic> json) =>
       _$GitImageModelFromJson(json);
 }
-
-@freezed
-sealed class UploadGitImageModel with _$UploadGitImageModel {
-  const factory UploadGitImageModel({
-    required String fileName,
-    required String base64Content,
-    required String commitMessage,
-    String? sha,
-  }) = _UploadGitImageModel;
-
-  factory UploadGitImageModel.fromJson(Map<String, dynamic> json) =>
-      _$UploadGitImageModelFromJson(json);
-}

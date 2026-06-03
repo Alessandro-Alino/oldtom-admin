@@ -20,6 +20,8 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
     : _gitImageRepo = gitImageRepo,
       super(GitImageState.init()) {
     on<GitImageEvent>(_onEvent);
+    // Read Git-Images when the bloc start
+    readGitImages();
   }
 
   // ====================
@@ -42,7 +44,11 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
       case _CreateGitImageEvent():
         await _createImage(event, emit);
         break;
-      default:
+      case _UpdateGitImageEvent():
+        await _updateImage(event, emit);
+        break;
+      case _DeleteGitImageEvent():
+        await _deleteImage(event, emit);
         break;
     }
   }
@@ -51,7 +57,7 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
   // ADD EVENTS
   // ====================
   // Init
-  void init() => add(const _InitEvent());
+  void init({bool? resetStatus}) => add(_InitEvent(resetStatus: resetStatus));
 
   // Read Git Images
   void readGitImages() => add(_ReadGitImagesEvent());
@@ -60,8 +66,18 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
   void pickImage({bool? reset}) => add(_PickImageEvent(reset: reset));
 
   // Create Image
-  void createImage({required String filename, required Uint8List bytes}) =>
-      add(_CreateGitImageEvent(filename: filename, bytes: bytes));
+  void createImage({required String filename, required PlatformFile file}) =>
+      add(_CreateGitImageEvent(filename: filename, file: file));
+
+  // Update Image
+  void updateImage({
+    required String filename,
+    required GitImageModel gitImage,
+  }) => add(_UpdateGitImageEvent(filename: filename, gitImage: gitImage));
+
+  // Delete Image
+  void deleteImage({required GitImageModel gitImage}) =>
+      add(_DeleteGitImageEvent(gitImage: gitImage));
 
   // ====================
   // BLOC
@@ -69,7 +85,14 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
 
   // _Init
   void _init(_InitEvent event, Emitter<GitImageState> emit) {
-    emit(GitImageState.init());
+    // Reset only status
+    if (event.resetStatus != null && event.resetStatus == true) {
+      emit(state.copyWith(gitImageOperation: GitImageOperation.idle));
+    }
+    // Init
+    else {
+      emit(GitImageState.init());
+    }
   }
 
   // _Read Git-Images
@@ -104,7 +127,6 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
       try {
         FilePickerResult? filePicked = await FilePicker.pickFiles(
           type: FileType.image,
-          withData: true,
         );
 
         emit(state.copyWith(filePicked: filePicked));
@@ -121,7 +143,8 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
   ) async {
     emit(state.copyWith(gitImageOperation: GitImageOperation.createLoading));
     try {
-      final content = base64Encode(event.bytes);
+      final bytes = await event.file.readAsBytes();
+      final content = base64Encode(bytes);
       await _gitImageRepo.createGitImages(
         path: event.filename,
         content: content,
@@ -129,6 +152,46 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
       emit(state.copyWith(gitImageOperation: GitImageOperation.createSuccess));
     } catch (e) {
       emit(state.copyWith(gitImageOperation: GitImageOperation.createError));
+      log('[GIT_IMAGE_BLOC] ERROR: $e');
+    }
+  }
+
+  // _Update Image
+  Future<void> _updateImage(
+    _UpdateGitImageEvent event,
+    Emitter<GitImageState> emit,
+  ) async {
+    emit(state.copyWith(gitImageOperation: GitImageOperation.updateLoading));
+    try {
+      await _gitImageRepo.updateGitImage(
+        path: event.filename,
+        gitURL: event.gitImage.gitUrl,
+        sha: event.gitImage.sha,
+      );
+      // GitHub not support UPDATE via API, so to update a file.
+      // First Create a copy with new name, then delete the previous.
+      deleteImage(gitImage: event.gitImage);
+      emit(state.copyWith(gitImageOperation: GitImageOperation.updateSuccess));
+    } catch (e) {
+      emit(state.copyWith(gitImageOperation: GitImageOperation.updateError));
+      log('[GIT_IMAGE_BLOC] ERROR: $e');
+    }
+  }
+
+  // _Delete Image
+  Future<void> _deleteImage(
+    _DeleteGitImageEvent event,
+    Emitter<GitImageState> emit,
+  ) async {
+    emit(state.copyWith(gitImageOperation: GitImageOperation.deleteLoading));
+    try {
+      await _gitImageRepo.deleteGitImage(
+        path: event.gitImage.path,
+        sha: event.gitImage.sha,
+      );
+      emit(state.copyWith(gitImageOperation: GitImageOperation.deleteSuccess));
+    } catch (e) {
+      emit(state.copyWith(gitImageOperation: GitImageOperation.deleteError));
       log('[GIT_IMAGE_BLOC] ERROR: $e');
     }
   }

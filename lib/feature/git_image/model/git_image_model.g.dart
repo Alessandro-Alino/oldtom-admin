@@ -31,20 +31,3 @@ Map<String, dynamic> _$GitImageModelToJson(_GitImageModel instance) =>
       'download_url': instance.downloadUrl,
       'type': instance.type,
     };
-
-_UploadGitImageModel _$UploadGitImageModelFromJson(Map<String, dynamic> json) =>
-    _UploadGitImageModel(
-      fileName: json['fileName'] as String,
-      base64Content: json['base64Content'] as String,
-      commitMessage: json['commitMessage'] as String,
-      sha: json['sha'] as String?,
-    );
-
-Map<String, dynamic> _$UploadGitImageModelToJson(
-  _UploadGitImageModel instance,
-) => <String, dynamic>{
-  'fileName': instance.fileName,
-  'base64Content': instance.base64Content,
-  'commitMessage': instance.commitMessage,
-  'sha': instance.sha,
-};

@@ -17,6 +17,8 @@ class CategBloc extends Bloc<CategEvent, CategState> {
     : _firestoreRepo = firestoreRepo,
       super(CategState.init()) {
     on<CategEvent>(_onEvent);
+    // Read categs when the bloc start
+    readCategs();
   }
 
   // ====================
@@ -92,7 +94,6 @@ class CategBloc extends Bloc<CategEvent, CategState> {
   ) async {
     try {
       emit(state.copyWith(status: CategStatus.loading));
-      await Future.delayed(const Duration(seconds: 2), () {});
       final List<CategModel> categList = await _firestoreRepo.readCategs();
       emit(
         state.copyWith(
