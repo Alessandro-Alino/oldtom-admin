@@ -49,7 +49,8 @@ class _ManageGitImageState extends State<ManageGitImage> {
         child: BlocConsumer<GitImageBloc, GitImageState>(
           listener: (context, state) {
             // Set the name of the file Picked
-            if (state.filePicked != null) {
+            if (state.filePicked != null &&
+                state.gitImageOperation == GitImageOperation.idle) {
               _nameGitImageCntrl.text = state.filePicked!.files.first.name
                   .split('.')
                   .first;
@@ -157,8 +158,8 @@ class _ManageGitImageState extends State<ManageGitImage> {
                         ),
                       ),
                     ),
-                    validator: (e) {
-                      if (_nameGitImageCntrl.text.isEmpty) {
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
                         return 'TU SI TUTTO SCEMO ALLORA.';
                       }
                       return null;
