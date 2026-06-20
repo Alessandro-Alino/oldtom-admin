@@ -80,8 +80,6 @@ class CategPage extends StatelessWidget {
                           return CocktailExample(
                             categ: categ,
                             onTap: () {
-                              //showModalToManageCateg(categ: categ);
-
                               // Show Modal to UPDATE Categ
                               Helpers.showGenericModal(
                                 context: context,
@@ -99,8 +97,6 @@ class CategPage extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            //showModalToManageCateg();
-
             // Show Modal to CREATE Categ
             Helpers.showGenericModal(
               context: context,

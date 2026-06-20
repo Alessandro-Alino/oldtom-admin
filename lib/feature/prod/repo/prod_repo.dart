@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:oldtom_admin/feature/prod/model/prod_model.dart';
 
 class ProdRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -8,6 +9,9 @@ class ProdRepo {
   // COLLECTIONS
   // ====================
 
+  late final CollectionReference<Map<String, dynamic>> _categCollRef =
+      _firestore.collection('categories');
+
   late final CollectionReference<Map<String, dynamic>> _prodCollRef = _firestore
       .collection('products');
 
@@ -15,78 +19,50 @@ class ProdRepo {
   // PRODUCTS
   // ====================
 
-  // CREATE
-  Future<void> addProd({required String name, required double price}) async {
-    try {
-      await _prodCollRef.add({
-        'name': name,
-        'price': price,
-        'createdAt': Timestamp.now(),
-      });
+  // READ ALL
+  Future<List<ProdModel>> readProds() async {
+    final res = await _prodCollRef.get();
 
-      log('[FIRESTORE_REPO] Prod added');
-    } catch (e) {
-      log('[FIRESTORE_REPO] addProd error: $e');
-      rethrow;
-    }
+    final List<ProdModel> prodList = res.docs.map((doc) {
+      final data = doc.data();
+      log('$data');
+      // Get the Prod from the doc[data], and add the ID to the Model
+      final ProdModel prod = ProdModel.fromJson(data).copyWith(id: doc.id);
+      return prod;
+    }).toList();
+
+    return prodList;
   }
 
-  // READ ALL
-  Future<QuerySnapshot<Map<String, dynamic>>> getProds() async {
-    try {
-      final res = await _prodCollRef.get();
-
-      log('[FIRESTORE_REPO] Prods: ${res.docs.length}');
-
-      return res;
-    } catch (e) {
-      log('[FIRESTORE_REPO] getProds error: $e');
-      rethrow;
-    }
+  // CREATE
+  Future<void> createProd({required ProdModel prod}) async {
+    await _prodCollRef.add(prod.toJson());
   }
 
   // READ SINGLE
-  Future<DocumentSnapshot<Map<String, dynamic>>> getProdById(
-    String docId,
-  ) async {
-    try {
-      final res = await _prodCollRef.doc(docId).get();
+  Future<DocumentSnapshot<Map<String, dynamic>>> readProdById(String id) async {
+    final res = await _prodCollRef.doc(id).get();
+    return res;
+  }
 
-      return res;
-    } catch (e) {
-      log('[FIRESTORE_REPO] getProdById error: $e');
-      rethrow;
-    }
+  // READ CATEG FOR PROD
+  Future<DocumentSnapshot<Map<String, dynamic>>> readCategById(
+    String id,
+  ) async {
+    final res = await _categCollRef.doc(id).get();
+    return res;
   }
 
   // UPDATE
   Future<void> updateProd({
-    required String docId,
-    required String newName,
-    required double newPrice,
+    required String id,
+    required ProdModel newProd,
   }) async {
-    try {
-      await _prodCollRef.doc(docId).update({
-        'name': newName,
-        'price': newPrice,
-      });
-
-      log('[FIRESTORE_REPO] Prod updated');
-    } catch (e) {
-      log('[FIRESTORE_REPO] updateProd error: $e');
-      rethrow;
-    }
+    await _prodCollRef.doc(id).update(newProd.toJson());
   }
 
   // DELETE
-  Future<void> deleteProd(String docId) async {
-    try {
-      await _prodCollRef.doc(docId).delete();
-
-      log('[FIRESTORE_REPO] Prod deleted');
-    } catch (e) {
-      log('[FIRESTORE_REPO] deleteProd error: $e');
-      rethrow;
-    }
+  Future<void> deleteProd({required String id}) async {
+    await _prodCollRef.doc(id).delete();
   }
 }

@@ -19,19 +19,7 @@ class GitImagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BasePage(
       title: Text(context.ltr.image(2)),
-      body: BlocConsumer<GitImageBloc, GitImageState>(
-        listener: (context, state) {
-          switch (state.gitImageOperation) {
-            case GitImageOperation.createSuccess:
-              context.read<GitImageBloc>().readGitImages();
-            case GitImageOperation.updateSuccess:
-              context.read<GitImageBloc>().readGitImages();
-            case GitImageOperation.deleteSuccess:
-              context.read<GitImageBloc>().readGitImages();
-            case _:
-              null;
-          }
-        },
+      body: BlocBuilder<GitImageBloc, GitImageState>(
         builder: (context, state) {
           return CustomScrollView(
             slivers: [

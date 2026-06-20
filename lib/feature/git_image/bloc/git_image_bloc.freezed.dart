@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'git_image_bloc.dart';
@@ -9,6 +9,7 @@ part of 'git_image_bloc.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -679,7 +680,7 @@ class _$GitImageStateCopyWithImpl<$Res>
 /// Create a copy of GitImageState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? gitImageOperation = null,Object? gitImageList = null,Object? filePicked = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(GitImageState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as GitImageStatus,gitImageOperation: null == gitImageOperation ? _self.gitImageOperation : gitImageOperation // ignore: cast_nullable_to_non_nullable
 as GitImageOperation,gitImageList: null == gitImageList ? _self.gitImageList : gitImageList // ignore: cast_nullable_to_non_nullable
@@ -819,7 +820,7 @@ return $default(_that.status,_that.gitImageOperation,_that.gitImageList,_that.fi
 
 
 class _GitImageState with DiagnosticableTreeMixin implements GitImageState {
-  const _GitImageState({this.status = GitImageStatus.init, this.gitImageOperation = GitImageOperation.idle, final  List<GitImageModel> gitImageList = const [], this.filePicked = null}): _gitImageList = gitImageList;
+  const _GitImageState({this.status = GitImageStatus.init, this.gitImageOperation = GitImageOperation.idle,  List<GitImageModel> gitImageList = const [], this.filePicked = null}): _gitImageList = gitImageList;
   
 
 @override@JsonKey() final  GitImageStatus status;

@@ -24,6 +24,6 @@ sealed class GitImageEvent with _$GitImageEvent {
 
   // Delete Git-Image
   const factory GitImageEvent.deleteGitImage({
-    required GitImageModel gitImage,
+    required GitImageModel gitImage
   }) = _DeleteGitImageEvent;
 }

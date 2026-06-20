@@ -11,10 +11,10 @@ part 'categ_state.dart';
 part 'categ_bloc.freezed.dart';
 
 class CategBloc extends Bloc<CategEvent, CategState> {
-  final CategRepo _firestoreRepo;
+  final CategRepo _categRepo;
 
-  CategBloc({required CategRepo firestoreRepo})
-    : _firestoreRepo = firestoreRepo,
+  CategBloc({required CategRepo categRepo})
+    : _categRepo = categRepo,
       super(CategState.init()) {
     on<CategEvent>(_onEvent);
     // Read categs when the bloc start
@@ -94,7 +94,7 @@ class CategBloc extends Bloc<CategEvent, CategState> {
   ) async {
     try {
       emit(state.copyWith(status: CategStatus.loading));
-      final List<CategModel> categList = await _firestoreRepo.readCategs();
+      final List<CategModel> categList = await _categRepo.readCategs();
       emit(
         state.copyWith(
           status: CategStatus.success,
@@ -115,7 +115,7 @@ class CategBloc extends Bloc<CategEvent, CategState> {
   ) async {
     try {
       emit(state.copyWith(categOperation: CategOperation.createLoading));
-      await _firestoreRepo.createCateg(categ: event.categ);
+      await _categRepo.createCateg(categ: event.categ);
       emit(state.copyWith(categOperation: CategOperation.createSuccess));
       readCategs();
     } catch (e) {
@@ -131,7 +131,7 @@ class CategBloc extends Bloc<CategEvent, CategState> {
   ) async {
     try {
       emit(state.copyWith(categOperation: CategOperation.updateLoading));
-      await _firestoreRepo.updateCateg(id: event.id, newCateg: event.categ);
+      await _categRepo.updateCateg(id: event.id, newCateg: event.categ);
       emit(state.copyWith(categOperation: CategOperation.updateSuccess));
       readCategs();
     } catch (e) {
@@ -147,7 +147,7 @@ class CategBloc extends Bloc<CategEvent, CategState> {
   ) async {
     try {
       emit(state.copyWith(categOperation: CategOperation.deleteLoading));
-      await _firestoreRepo.deleteCateg(id: event.id);
+      await _categRepo.deleteCateg(id: event.id);
       emit(state.copyWith(categOperation: CategOperation.deleteSuccess));
       readCategs();
     } catch (e) {

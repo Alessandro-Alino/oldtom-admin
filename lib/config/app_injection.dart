@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:oldtom_admin/feature/categ/bloc/categ_bloc.dart';
 import 'package:oldtom_admin/feature/categ/repo/categ_repo.dart';
+import 'package:oldtom_admin/feature/prod/bloc/prod_bloc.dart';
+import 'package:oldtom_admin/feature/prod/repo/prod_repo.dart';
 import 'theme/repo/app_theme_repo.dart';
 import 'theme/cubit/app_theme_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +26,8 @@ class AppInjection extends StatelessWidget {
         RepositoryProvider<AuthRepo>(create: (context) => AuthRepo()),
         // Categ Repo
         RepositoryProvider<CategRepo>(create: (context) => CategRepo()),
+        // Prod Repo
+        RepositoryProvider<ProdRepo>(create: (context) => ProdRepo()),
         // Git Image Repo
         RepositoryProvider<GitImageRepo>(create: (context) => GitImageRepo()),
       ],
@@ -39,10 +43,17 @@ class AppInjection extends StatelessWidget {
           BlocProvider<AuthBloc>(
             create: (context) => AuthBloc(authRepo: context.read<AuthRepo>()),
           ),
-          // Firestore Bloc
+          // Categ Bloc
           BlocProvider<CategBloc>(
             create: (context) =>
-                CategBloc(firestoreRepo: context.read<CategRepo>()),
+                CategBloc(categRepo: context.read<CategRepo>()),
+          ),
+          // Prod Bloc
+          BlocProvider<ProdBloc>(
+            create: (context) => ProdBloc(
+              prodRepo: context.read<ProdRepo>(),
+              categRepo: context.read<CategRepo>(),
+            ),
           ),
           // Git Image Bloc
           BlocProvider<GitImageBloc>(

@@ -149,6 +149,10 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
         path: event.filename,
         content: content,
       );
+      // Read Image After Create
+      await Future.delayed(const Duration(seconds: 1), () {
+        readGitImages();
+      });
       emit(state.copyWith(gitImageOperation: GitImageOperation.createSuccess));
     } catch (e) {
       emit(state.copyWith(gitImageOperation: GitImageOperation.createError));
@@ -163,14 +167,19 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
   ) async {
     emit(state.copyWith(gitImageOperation: GitImageOperation.updateLoading));
     try {
+      // 1/2 GitHub not support UPDATE via API, so to update a file.
+      // First Create a copy with new name
       await _gitImageRepo.updateGitImage(
         path: event.filename,
         gitURL: event.gitImage.gitUrl,
         sha: event.gitImage.sha,
       );
-      // GitHub not support UPDATE via API, so to update a file.
-      // First Create a copy with new name, then delete the previous.
+      // 2/2 Then delete the previous.
       deleteImage(gitImage: event.gitImage);
+      // Read Image After Update
+      await Future.delayed(const Duration(seconds: 1), () {
+        readGitImages();
+      });
       emit(state.copyWith(gitImageOperation: GitImageOperation.updateSuccess));
     } catch (e) {
       emit(state.copyWith(gitImageOperation: GitImageOperation.updateError));
@@ -189,6 +198,10 @@ class GitImageBloc extends Bloc<GitImageEvent, GitImageState> {
         path: event.gitImage.path,
         sha: event.gitImage.sha,
       );
+      // Read Image After Delete
+      await Future.delayed(const Duration(seconds: 1), () {
+        readGitImages();
+      });
       emit(state.copyWith(gitImageOperation: GitImageOperation.deleteSuccess));
     } catch (e) {
       emit(state.copyWith(gitImageOperation: GitImageOperation.deleteError));
